@@ -1,3 +1,9 @@
+#obj files
+obj/*
+
+#binaries
+bin/*
+
 # Prerequisites
 *.d
 
