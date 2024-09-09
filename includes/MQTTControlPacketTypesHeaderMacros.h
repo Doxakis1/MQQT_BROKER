@@ -1,5 +1,5 @@
-#ifndef MQTT_CONTROL_PACKET_TYPES
-#define MQTT_CONTROL_PACKET_TYPES
+#ifndef MQTT_CONTROL_PACKET_TYPES_HEADER_MACROS
+#define MQTT_CONTROL_PACKET_TYPES_HEADER_MACROS
 
 // The mqtt fixed header is the first byte recieved via mqtt protocol 
 // The upper half of the 8 bits is used to denote the packet type and the lower bits are flags
