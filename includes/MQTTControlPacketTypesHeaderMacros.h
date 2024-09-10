@@ -4,6 +4,9 @@
 // The mqtt fixed header is the first byte recieved via mqtt protocol 
 // The upper half of the 8 bits is used to denote the packet type and the lower bits are flags
 
+typedef	char	HeaderType;
+typedef	char	HeaderFlags;
+typedef int	SocketFileDescriptor;
 //Packet types
 #define HEADER_RESERVED 0 << 4
 #define HEADER_CONNECT 1 << 4
@@ -32,5 +35,16 @@
 #define HEADER_PUBLISH_QOS_MAX_DELIVERY_NOT_ONCE 3 << 1
 #define HEADER_PUBLISH_QOS_MIN_DELIVERY_ONCE 1 << 1
 #define HEADER_PUBLISH_QOS_MAX_DELIVERY_ONCE 1 << 2
+
+typedef struct {
+	HeaderType	type;
+	HeaderFlags	flags;
+	char		*headerStart;
+	char		*vHeaderStart;
+	char		*payloadStart;
+	sizeT		packetLength;
+}	mqtt_packet;
+
+mqtt_packet ValidatePacket(SocketFileDescriptor fd,
 
 #endif

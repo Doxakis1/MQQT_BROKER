@@ -1,14 +1,15 @@
 NAME = mqtt_broker
 
-SRC = src/entry_point.c
 
+SRC = entry_point.c utilities.c 
+SRCDIR = src
 OBJDIR = obj
 BINDIR = bin
 OFILES = $(SRC:%.c=$(OBJDIR)/%.o)
 
 INCLUDES = -Iincludes
 
-FLAGS = -Wall -Wextra -Werror -pedantic $(INCLUDES)
+FLAGS = -std=c2x -Wall -Wextra -Werror -Wpedantic $(INCLUDES)
 
 DEBUG_FLAGS = -g -fsanitize=address,undefined
 
@@ -18,10 +19,10 @@ all: $(BINDIR)/$(NAME)
 
 $(BINDIR)/$(NAME): $(OFILES)
 	@mkdir -p $(BINDIR)
-	cc $(FLAGS) $(OFILES) -o $(BINDIR)/$(NAME)
+	cc $(FLAGS) -o $(BINDIR)/$(NAME) $(OFILES)
 
 $(OBJDIR)/%.o: %.c
-	@mkdir -p $(OBJDIR)/$(dir $<)
+	@mkdir -p $(OBJDIR)
 	cc $(FLAGS) -c -o $@ $<
 
 clean:
@@ -36,3 +37,4 @@ fclean: clean
 
 re: fclean all
 
+vpath %.c $(SRCDIR)/
