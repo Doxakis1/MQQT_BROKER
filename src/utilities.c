@@ -1,5 +1,7 @@
 #include "Utilities.h"
-size_t dox_strlen(const char *str)
+#include <sys/time.h>
+
+size_t	dox_strlen(const char *str)
 {
 	size_t len = 0;
 	if (!str)
@@ -9,7 +11,7 @@ size_t dox_strlen(const char *str)
 	return len;
 }
 
-size_t GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
+size_t	GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
 {
 	size_t	message_size = 0;
 	size_t	currentByteIndex = 0;
@@ -29,3 +31,15 @@ size_t GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
 	*vbyteSize = currentByteIndex;
 	return message_size;
 }
+
+unsigned long	getTime(void)
+{
+	long			time;
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, NULL);
+	time = (current_time.tv_sec) * 1000
+		+ (current_time.tv_usec / 1000);
+	return (time);
+}
+
