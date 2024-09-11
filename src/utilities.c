@@ -1,7 +1,8 @@
 #include "Utilities.h"
 #include <sys/time.h>
+#include <stdlib.h>
 
-size_t	dox_strlen(const char *str)
+size_t	DoxStrlen(const char *str)
 {
 	size_t len = 0;
 	if (!str)
@@ -32,7 +33,13 @@ size_t	GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
 	return message_size;
 }
 
-unsigned long	getTime(void)
+void EXPORTTHIS(void *this) {
+	register void *ptr asm("r15");
+	ptr  = this;
+	(void)ptr;
+}
+
+unsigned long	GetTime(void)
 {
 	long			time;
 	struct timeval	current_time;
@@ -43,3 +50,19 @@ unsigned long	getTime(void)
 	return (time);
 }
 
+smart_string *makeNewSmartString(void)
+{
+	smart_string    *returnString = (smart_string *)malloc(sizeof(smart_string));
+	return returnString ? *returnString = (smart_string){NULL, 0, 0,&SmartStringGetLength, &SmartStringAppend , NULL} , returnString : returnString;
+}
+
+size_t SmartStringGetLength(void)
+{
+	int *this;
+	EXPORTTHIS(this);
+}
+
+void SmartStringAppend(void *data, size_t length)
+{
+	
+}

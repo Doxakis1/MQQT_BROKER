@@ -9,7 +9,7 @@ OFILES = $(SRC:%.c=$(OBJDIR)/%.o)
 
 INCLUDES = -Iincludes
 
-FLAGS = -std=c2x -Wall -Wextra -Werror -Wpedantic $(INCLUDES)
+FLAGS = -Wall -Wextra -Werror -Wpedantic $(INCLUDES)
 
 DEBUG_FLAGS = -g -fsanitize=address,undefined
 

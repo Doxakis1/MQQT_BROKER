@@ -8,7 +8,7 @@
 #define SIZE_T_MAX sizeof(size_t)
 #define MAX_CONNECTIONS 1025
 #define BUFFER_SIZE 1024
-#define ERROR(x) write(2, x, dox_strlen(x));
+#define ERROR(x) write(2, x, DoxStrlen(x));
 #define BACKLOG_MAX 1024 //maximum connection queue 
 #define DEFAULT_TIME_OUT (unsigned long)100000 //100 seconds
 
