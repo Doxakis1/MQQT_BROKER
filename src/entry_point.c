@@ -22,12 +22,27 @@ int	initializeConnections(Connection *connections)
 	return 0;
 }
 
+
+
 int main(int ac, char **av)
 {
+	smartString str = MakeNewSmartString();
+	smartString str2 = MakeNewSmartString();
+	SmartStringAppend(&str, "hello world!", 12);
+	SmartStringAppend(&str, "ByeBye world!", 13);
+	SmartStringAppend(&str2, "This is string 2:", 17);
+	SmartStringAppend(&str2, str, 12+13);
+	printf("Our string1 is:%s\n", str);
+	printf("Our string2 is:%s\n", str2);
+	SmartStringDestroy(&str);
+	SmartStringDestroy(&str2);
+	exit(1);	
 	struct sockaddr_in	serveraddr;
 	const struct sockaddr	*serveraddr_ptr = (const struct sockaddr*)&serveraddr;
+	struct sockaddr		clientSockaddr;
 	socklen_t		len;
 	int			serverfd;
+	int			newClient;
 	Connection		connections[MAX_CONNECTIONS];
 	fd_set			inSet, outSet, copySet;
  	struct timeval		selectTimeOut;
@@ -73,8 +88,18 @@ int main(int ac, char **av)
 				if (FD_ISSET(i, &inSet))
 				{
 					if ( i == serverfd){
-						ERROR("We got a new connection!\n");
+						len = sizeof(struct sockaddr);
+						newClient = accept(serverfd, &clientSockaddr, &len);
+						if (newClient < 0){
+							ERROR("Failed to accept new connection!\n");
+						}else if (newClient == MAX_CONNECTIONS){
+						//TODO: add logic to send to user the code that server is a max capacity as per MQTT protocol
+						close(newClient);
+						}else{
+						//TODO: initialize new connection
+						}
 					}else{
+						//TODO:add getting the message code here
 						ERROR("We got a new message!\n");
 					}
 				}
@@ -84,4 +109,10 @@ int main(int ac, char **av)
 		//Here will be added to code and logic to send msgs to clients
 	} 
 	return 1;
+}
+
+
+int testFunction(void)
+{
+	exit(1);
 }

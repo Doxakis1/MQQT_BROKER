@@ -9,13 +9,19 @@ OFILES = $(SRC:%.c=$(OBJDIR)/%.o)
 
 INCLUDES = -Iincludes
 
-FLAGS = -std=c2x -Wall -Wextra -Werror -Wpedantic $(INCLUDES)
+FLAGS = -Wall -Wextra -Werror -Wpedantic $(INCLUDES)
 
 DEBUG_FLAGS = -g -fsanitize=address,undefined
 
 .PHONY: all clean fclean re
 
 all: $(BINDIR)/$(NAME)
+
+test: $(OFILES)
+	@mkdir -p $(BINDIR)
+	cc $(FLAGS) $(DEBUG_FLAGS) -Wl,-etestFunction -o $(BINDIR)/$(NAME) $(OFILES)
+	
+	
 
 $(BINDIR)/$(NAME): $(OFILES)
 	@mkdir -p $(BINDIR)

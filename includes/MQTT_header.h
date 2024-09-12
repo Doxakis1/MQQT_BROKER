@@ -8,7 +8,6 @@
 #define SIZE_T_MAX sizeof(size_t)
 #define MAX_CONNECTIONS 1025
 #define BUFFER_SIZE 1024
-#define ERROR(x) write(2, x, dox_strlen(x));
 #define BACKLOG_MAX 1024 //maximum connection queue 
 #define DEFAULT_TIME_OUT (unsigned long)100000 //100 seconds
 
@@ -18,7 +17,7 @@ typedef	pthread_mutex_t connection_lock;
 typedef struct{
 	int		fd;
 	bool		inUse;
-	void		*data;
+	smart_string	*data;
 	size_t		dataLen;
 	time_in_ms	timeOfLastIncompleteMsg;
 	time_in_ms	timeOfLastMsg;

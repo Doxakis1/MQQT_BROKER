@@ -1,5 +1,5 @@
 #include "MQTT_header.h"
-#include "MQQTControlPackTypesHeaderMacros.h"
+#include "MQTTControlPackTypesHeaderMacros.h"
 #include "utilities.h"
 #include <unistd.h>
 
