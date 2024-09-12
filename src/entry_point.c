@@ -22,12 +22,16 @@ int	initializeConnections(Connection *connections)
 	return 0;
 }
 
+
+
 int main(int ac, char **av)
 {
 	struct sockaddr_in	serveraddr;
 	const struct sockaddr	*serveraddr_ptr = (const struct sockaddr*)&serveraddr;
+	struct sockaddr		clientSockaddr;
 	socklen_t		len;
 	int			serverfd;
+	int			newClient;
 	Connection		connections[MAX_CONNECTIONS];
 	fd_set			inSet, outSet, copySet;
  	struct timeval		selectTimeOut;
@@ -73,8 +77,18 @@ int main(int ac, char **av)
 				if (FD_ISSET(i, &inSet))
 				{
 					if ( i == serverfd){
-						ERROR("We got a new connection!\n");
+						len = sizeof(struct sockaddr);
+						newClient = accept(serverfd, &clientSockaddr, &len);
+						if (newClient < 0){
+							ERROR("Failed to accept new connection!\n");
+						}else if (newClient == MAX_CONNECTIONS){
+						//TODO: add logic to send to user the code that server is a max capacity as per MQTT protocol
+						close(newClient);
+						}else{
+						//TODO: initialize new connection
+						}
 					}else{
+						//TODO:add getting the message code here
 						ERROR("We got a new message!\n");
 					}
 				}
