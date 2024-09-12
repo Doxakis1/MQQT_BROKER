@@ -2,6 +2,8 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <unistd.h>
+//TODO: remove stdio
+#include <stdio.h>
 
 size_t	DoxStrlen(const char *str)
 {
@@ -36,14 +38,23 @@ size_t	GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
 
 smart_string	*GETTHIS(void)
 {
-	register smart_string *ptr asm("r15");
+	smart_string *ptr;
+	__asm__ __volatile__ (
+    	"movq %%r15, %0"
+    	: "=r"(ptr)
+    	:
+    	:
+	);
 	return ptr;
 }
 
 void EXPORTTHIS(void *this) {
-	register void *ptr asm("r15");
-	ptr  = this;
-	(void)ptr;
+	__asm__ __volatile__ (
+    	"movq %0, %%r15"
+    	:
+    	: "r" (this)
+    	: 
+	);
 }
 
 unsigned long	GetTime(void)
@@ -64,10 +75,25 @@ void SmartStringDestroy()
 	free(this);
 }
 
-smart_string *makeNewSmartString(void)
+smart_string *MakeNewSmartString(void)
 {
 	smart_string    *returnString = (smart_string *)malloc(sizeof(smart_string));
-	return returnString ? *returnString = (smart_string){NULL, 0, 0, &SmartStringGetLength, &SmartStringAppend , &SmartStringDestroy} , returnString : returnString;
+	if (returnString == NULL)
+		return returnString;
+	returnString->string = NULL;
+	returnString->stringLength = 0;
+	returnString->bufferLength = 0;
+	returnString->getString = &SmartStringGetString;
+	returnString->getLength = &SmartStringGetLength;
+	returnString->append = &SmartStringAppend;
+	returnString->destroy = &SmartStringDestroy;
+	return returnString;
+}
+
+char *SmartStringGetString(void)
+{
+	smart_string *this = GETTHIS();
+	return this->string;
 }
 
 size_t SmartStringGetLength(void)
@@ -80,8 +106,11 @@ void SmartStringAppend(const void *data, const size_t length)
 {
 	smart_string *this = GETTHIS();
 	const char *newData = (const char *)data;
+	size_t i = 0;
 	while (this->bufferLength < (this->stringLength + length))
 	{
+		if (this->bufferLength == 0)
+			this->bufferLength = 2;
 		this->string  = realloc(this->string, this->bufferLength * 2);
 		if(this->string == NULL){
 			(void)ERROR("Failed to realloc in SmartStringAppend\n")
@@ -89,8 +118,11 @@ void SmartStringAppend(const void *data, const size_t length)
 		}
 		this->bufferLength *= 2;	
 	}
-	while (this->stringLength < (this->stringLength + length))
+	while (i < length)
 	{
-		this->string[this->stringLength++] = *newData++;	
+		this->string[this->stringLength + i] = newData[i];
+		i++;
 	}
+	this->stringLength += length - 1;
+	this->string[this->stringLength] = '\0';
 }

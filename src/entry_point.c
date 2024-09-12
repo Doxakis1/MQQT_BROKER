@@ -26,6 +26,27 @@ int	initializeConnections(Connection *connections)
 
 int main(int ac, char **av)
 {
+	ERROR("WTF before\n")
+	smart_string *string1 = MakeNewSmartString();
+	smart_string *string2 = MakeNewSmartString();
+	//smart_string *string2 = MakeNewSmartString();
+	EXPORTTHIS(string1);
+	char *str = "FIRST world!";
+	char *str2 = "SECOND world!\n";
+	printf("string1 lentgth: %ld, string: %s\n", string1->getLength(), string1->getString());
+	string1->append(str,DoxStrlen(str)); 
+	printf("string1 lentgth: %ld, string: %s\n", string1->getLength(), string1->getString());
+	EXPORTTHIS(string2);
+	string2->append(str,DoxStrlen(str)); 
+	string2->append(str2,DoxStrlen(str)); 
+	EXPORTTHIS(string1);
+	string1->append(str2,DoxStrlen(str)); 
+	printf("string1 lentgth: %ld, string: %s\n", string1->getLength(), string1->getString());
+	string1->destroy();
+	EXPORTTHIS(string2);
+	printf("string2 lentgth: %ld, string: %s\n", string2->getLength(), string2->getString());
+	string2->destroy();
+	exit(1);	
 	struct sockaddr_in	serveraddr;
 	const struct sockaddr	*serveraddr_ptr = (const struct sockaddr*)&serveraddr;
 	struct sockaddr		clientSockaddr;
@@ -98,4 +119,10 @@ int main(int ac, char **av)
 		//Here will be added to code and logic to send msgs to clients
 	} 
 	return 1;
+}
+
+
+int testFunction(void)
+{
+	exit(1);
 }

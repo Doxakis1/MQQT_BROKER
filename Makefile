@@ -17,6 +17,12 @@ DEBUG_FLAGS = -g -fsanitize=address,undefined
 
 all: $(BINDIR)/$(NAME)
 
+test: $(OFILES)
+	@mkdir -p $(BINDIR)
+	cc $(FLAGS) $(DEBUG_FLAGS) -Wl,-etestFunction -o $(BINDIR)/$(NAME) $(OFILES)
+	
+	
+
 $(BINDIR)/$(NAME): $(OFILES)
 	@mkdir -p $(BINDIR)
 	cc $(FLAGS) -o $(BINDIR)/$(NAME) $(OFILES)
