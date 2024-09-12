@@ -36,27 +36,6 @@ size_t	GetMessageSize(const void *vbyteStart, int *vbyteSize, size_t maxBytes)
 	return message_size;
 }
 
-smart_string	*GETTHIS(void)
-{
-	smart_string *ptr;
-	__asm__ __volatile__ (
-    	"movq %%r15, %0"
-    	: "=r"(ptr)
-    	:
-    	:
-	);
-	return ptr;
-}
-
-void EXPORTTHIS(void *this) {
-	__asm__ __volatile__ (
-    	"movq %0, %%r15"
-    	:
-    	: "r" (this)
-    	: 
-	);
-}
-
 unsigned long	GetTime(void)
 {
 	long			time;
@@ -68,61 +47,44 @@ unsigned long	GetTime(void)
 	return (time);
 }
 
-void SmartStringDestroy()
-{
-	smart_string *this = GETTHIS();
-	free(this->string);
-	free(this);
+smartString MakeNewSmartString(void){
+	smart_string *newString;
+	newString = (smart_string *)malloc(sizeof(smart_string) + 1);
+	if (newString == NULL)
+		return NULL;
+	newString->bufferSize = 1;
+	newString->stringLength = 0;
+	newString->string[0] = '\0';
+	return newString->string;
 }
 
-smart_string *MakeNewSmartString(void)
+void	SmartStringAppend(smartString *str, const void *str2, const size_t len)
 {
-	smart_string    *returnString = (smart_string *)malloc(sizeof(smart_string));
-	if (returnString == NULL)
-		return returnString;
-	returnString->string = NULL;
-	returnString->stringLength = 0;
-	returnString->bufferLength = 0;
-	returnString->getString = &SmartStringGetString;
-	returnString->getLength = &SmartStringGetLength;
-	returnString->append = &SmartStringAppend;
-	returnString->destroy = &SmartStringDestroy;
-	return returnString;
-}
-
-char *SmartStringGetString(void)
-{
-	smart_string *this = GETTHIS();
-	return this->string;
-}
-
-size_t SmartStringGetLength(void)
-{
-	smart_string *this = GETTHIS();
-	return this->stringLength;
-}
-
-void SmartStringAppend(const void *data, const size_t length)
-{
-	smart_string *this = GETTHIS();
-	const char *newData = (const char *)data;
 	size_t i = 0;
-	while (this->bufferLength < (this->stringLength + length))
-	{
-		if (this->bufferLength == 0)
-			this->bufferLength = 2;
-		this->string  = realloc(this->string, this->bufferLength * 2);
-		if(this->string == NULL){
-			(void)ERROR("Failed to realloc in SmartStringAppend\n")
+	smart_string *ptr = (smart_string *)(*str - SMART_STRING_SIZE);
+	while (ptr->bufferSize < (ptr->stringLength + len + 1))
+	{	
+		ptr = (smart_string *)realloc(ptr, SMART_STRING_SIZE + ptr->bufferSize * 2);
+		if (ptr == NULL)
 			exit(1);
-		}
-		this->bufferLength *= 2;	
+		ptr->bufferSize *= 2;
+		ptr->bufferSize++;
 	}
-	while (i < length)
+	while (i < len)
 	{
-		this->string[this->stringLength + i] = newData[i];
+		ptr->string[ptr->stringLength + i] = ((char *)str2)[i];
 		i++;
 	}
-	this->stringLength += length - 1;
-	this->string[this->stringLength] = '\0';
+	ptr->stringLength += len;
+	ptr->string[ptr->stringLength] = '\0';
+	*str = ptr->string;
+	
 }
+
+void SmartStringDestroy(smartString *str)
+{
+	smart_string *ptr = (smart_string *)(*str - SMART_STRING_SIZE);
+	free(ptr);
+	*str = NULL;
+}
+
